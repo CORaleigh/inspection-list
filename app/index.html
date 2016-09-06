@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" >
+  <head>
+    <title>Inspection Schedule</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+    <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
+    <link rel="stylesheet" href="../node_modules/angular-material/angular-material.css"/>
+    <link rel="stylesheet" href="assets/app.css"/>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.0/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.0/"></script>
+    <style type="text/css">
+        /**
+         * Hide when Angular is not yet loaded and initialized
+         */
+        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+          display: none !important;
+        }
+    </style>
+
+  </head>
+
+  <body ng-app="starterApp" layout="column" ng-controller="InspectionController as vm" ng-cloak>
+
+    <md-toolbar layout="row">
+      <md-button class="menu" hide-gt-sm ng-click="vm.toggleList()" aria-label="Show User List">
+        <md-icon md-svg-icon="menu" ></md-icon>
+      </md-button>
+      <h1>Inspection Schedule</h1>
+    </md-toolbar>
+
+    <div flex layout="row">
+
+        <md-sidenav  ng-click="vm.toggleList()" md-is-locked-open="$mdMedia('gt-sm')" md-component-id="left" class="md-whiteframe-z2" >
+
+<!--         <md-content>
+          <md-tabs>
+            <md-tab  label="by permit">-->
+              <md-content class="md-padding">
+                <md-autocomplete
+                  ng-disabled="false"
+                  md-no-cache="false"
+                  md-selected-item="vm.selectedPermit"
+                  md-search-text="vm.permitText"
+                  md-selected-item-change="vm.selectedItemChange(permit)"
+                  md-items="permit in vm.permitSearch(vm.permitText)"
+                  md-item-text="permit.attributes.workOrderId"
+                  md-min-length="4"
+                  md-autoselect="true"
+                  placeholder="Enter your permit #">
+                  <span md-highlight-text="searchText">{{permit.attributes.workOrderId}}</span>
+                </md-autocomplete>
+              </md-content>
+<!--            </md-tab>
+            <md-tab label="inspectors">
+              <md-content class="md-padding">
+
+              </md-content>
+            </md-tab>
+          </md-tabs>
+        </md-content> -->
+
+        <md-content>
+          <md-toolbar layout="row" class="md-hue-1" ng-show="vm.inspector">
+<!--             <div class="md-toolbar-tools"> -->
+              <img ng-src="https://ral.maps.arcgis.com/sharing/rest/community/users/{{vm.inspector.username}}/info/{{vm.inspector.thumbnail}}" class="md-avatar" alt="{{vm.inspector.fullName}}" />
+              <div style="float: right">
+                <small>Your Inspector Is</small>
+                <h3>{{vm.inspector.fullName}}</h3>
+              </div>
+<!--             </div> -->
+          </md-toolbar>            
+          <md-list flex>
+            <md-list-item ng-repeat="work in vm.queue | orderBy: ['dueDate'] | filter: vm.filterAssigned(work)">
+                <md-button ng-click="vm.selectInspection(work)" ng-class="{'md-warn' : vm.checkWorkOrderId(work.work, vm.selectedPermit.attributes.workOrderId), 'md-accent': $index === 0, 'md-hue-3': $index === 0}" class="md-raised">
+<!--                   <md-icon md-svg-icon="{{it.avatar}}" class="avatar"></md-icon> -->
+                  <h1>{{$index + 1}} <small ng-show="$index === 0">In Progress</small><small ng-show="vm.checkWorkOrderId(work.work, vm.selectedPermit.attributes.workOrderId)">Your Inspection</small></h1>{{work.location}}
+                  <div><small>{{work.dueDate | date: 'shortTime'}}</small></div>
+                  <div><small style="margin-right: 1em;" ng-repeat="job in work.work">{{job.code}}</small></div>                    
+                </md-button>
+            </md-list-item>
+          </md-list>
+              </md-content>          
+        </md-sidenav>
+
+        <md-content flex id="content">
+          <div id="viewDiv"></div>
+<!--           <md-icon md-svg-icon="{{vm.selected.avatar}}" class="avatar"></md-icon>
+          <h2>{{vm.selected.name}}</h2>
+          <p>{{vm.selected.content}}</p>
+
+          <md-button class="share" md-no-ink ng-click="vm.makeContact(vm.selected)" aria-label="Share with {{ vm.selected.name }}">
+            <md-icon md-svg-icon="share"></md-icon>
+          </md-button> -->
+        </md-content>
+
+    </div>
+
+    <script src="../node_modules/angular/angular.js"></script>
+    <script src="../node_modules/angular-animate/angular-animate.js"></script>
+    <script src="../node_modules/angular-aria/angular-aria.js"></script>
+    <script type="text/javascript" src="../node_modules/angular-material/angular-material.js"></script>
+
+    <script src="./src/inspection/Inspection.js"></script>
+    <script src="./src/inspection/InspectionController.js"></script>
+    <script src="./src/inspection/InspectionService.js"></script>
+
+    <script type="text/javascript">
+
+          angular
+              .module('starterApp', ['ngMaterial', 'inspection'])
+              .config(function($mdThemingProvider, $mdIconProvider){
+
+                  $mdIconProvider
+                      .defaultIconSet("./assets/svg/avatars.svg", 128)
+                      .icon("menu"       , "./assets/svg/menu.svg"        , 24)
+                      .icon("share"      , "./assets/svg/share.svg"       , 24)
+                      .icon("google_plus", "./assets/svg/google_plus.svg" , 512)
+                      .icon("hangouts"   , "./assets/svg/hangouts.svg"    , 512)
+                      .icon("twitter"    , "./assets/svg/twitter.svg"     , 512)
+                      .icon("phone"      , "./assets/svg/phone.svg"       , 512);
+
+                      $mdThemingProvider.theme('default')
+                          .primaryPalette('blue')
+                          .accentPalette('green');
+
+              });
+
+    </script>
+
+  </body>
+</html>
