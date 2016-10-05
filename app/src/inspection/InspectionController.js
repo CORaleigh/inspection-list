@@ -82,16 +82,18 @@
       })
     }
     self.selectedItemChange = function (permit) {
-      console.log(permit);
-      self.permit = permit;
-      inspectionService.getWorkerAccount(permit.attributes.workerId).then(function (workers) {
-        if (workers.features.length > 0) {
-          var accountId = workers.features[0].attributes.userId;
-          inspectionService.getWorkerInfo(accountId).then(function (data) {
-            self.inspector = data;
-          });      
-        }
-      });
+      if (permit) {
+        self.permit = permit;
+        inspectionService.getWorkerAccount(permit.attributes.workerId).then(function (workers) {
+          if (workers.features.length > 0) {
+            var accountId = workers.features[0].attributes.userId;
+            inspectionService.getWorkerInfo(accountId).then(function (data) {
+              self.inspector = data;
+            });      
+          }
+        });
+      }
+
 
       inspectionService.getWorkerQueue(permit.attributes.workerId).then(function (queue) { 
         self.queue = queue;
@@ -113,23 +115,24 @@
         }
         view.goTo({target:view.graphics});
         $timeout(function () {
-         $anchorScroll.yOffset = 100; 
-         $location.hash('selected');
+         //$anchorScroll.yOffset = 400; 
+         document.getElementById('selected').scrollIntoView(false)
+         //$location.hash('selected');
 
           // call $anchorScroll()
-          $anchorScroll();
+          //$anchorScroll();
         },1000);
       });    
     }
 
-      // $interval(function () {
-      //   if (self.selectedPermit) {
-      //     inspectionService.getWorkerQueue(self.selectedPermit.attributes.workerId).then(function (queue) { 
-      //       self.queue = queue.features;
-      //     });
-      //   }
+      $interval(function () {
+        if (self.selectedPermit) {
+          inspectionService.getWorkerQueue(self.selectedPermit.attributes.workerId).then(function (queue) { 
+            self.queue = queue;
+          });
+        }
 
-      // }, 5000);
+      }, 5000);
 
 
 
@@ -175,7 +178,7 @@
               color: [255, 255, 255],
               width: 2
             },
-            size: '20px'
+            size: '24px'
           });
           var textSymbol = new TextSymbol({
             color: "white",
