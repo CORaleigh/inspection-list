@@ -49,24 +49,28 @@
             orderByFields: 'dueDate,location'
           }
         }).then(function (response) {
-          var lastLocation = null, item = null, results = {features:[]};
-          for (var i = 0; i < response.data.features.length; i++) {
-            console.log(response.data.features[i].attributes.location);
-            if (response.data.features[i].attributes.location === lastLocation) {
-              item.work.push({oid: response.data.features[i].attributes.OBJECTID, permit: response.data.features[i].attributes.workOrderId, code: response.data.features[i].attributes.code});
-            } else {
-              if (item) {
-                results.features.push(item);
-              }
-              item = {geometry: response.data.features[i].geometry, status: response.data.features[i].attributes.status, location: response.data.features[i].attributes.location, notes: response.data.features[i].attributes.notes,dueDate: response.data.features[i].attributes.dueDate, work: [{oid: response.data.features[i].attributes.OBJECTID, permit: response.data.features[i].attributes.workOrderId, code: response.data.features[i].attributes.code}]};
-            }
-            if (i === response.data.features.length - 1) {
-              results.features.push(item);
-            }            
-            lastLocation = response.data.features[i].attributes.location;            
-          }
-          console.log(results);
-          return results;
+          var lastLocation = null, item = null, results = {features:[]}, status = 0;
+          // for (var i = 0; i < response.data.features.length; i++) {
+          //   console.log(response.data.features[i].attributes.location);
+          //   if (response.data.features[i].attributes.location === lastLocation) {
+          //     item.work.push({oid: response.data.features[i].attributes.OBJECTID, status: response.data.features[i].attributes.status, permit: response.data.features[i].attributes.workOrderId, code: response.data.features[i].attributes.code});
+          //   } else {
+          //     if (item) {
+          //       results.features.push(item);
+          //     }
+          //     item = {geometry: response.data.features[i].geometry, status: response.data.features[i].attributes.status, location: response.data.features[i].attributes.location, notes: response.data.features[i].attributes.notes,dueDate: response.data.features[i].attributes.dueDate, work: [{oid: response.data.features[i].attributes.OBJECTID, permit: response.data.features[i].attributes.workOrderId, code: response.data.features[i].attributes.code}]};
+          //     status = 0;
+          //   }
+          //   if (i === response.data.features.length - 1) {
+          //     results.features.push(item);
+          //   }
+          //   if (response.data.features[i].attributes.status > status)
+          //     status = response.data.features[i].attributes.status;
+          //     results.status = status;
+          //   lastLocation = response.data.features[i].attributes.location;            
+          // }
+          // console.log(results);
+          return response.data.features;
         });
         return promise;
       }

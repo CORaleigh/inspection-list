@@ -35,12 +35,14 @@
 
     <div flex layout="row">
 
-        <md-sidenav  ng-click="vm.toggleList()" md-is-locked-open="$mdMedia('gt-sm')" md-component-id="left" class="md-whiteframe-z2" >
+        <md-sidenav md-is-open="true"   md-is-locked-open="$mdMedia('gt-sm')" md-component-id="left" class="md-whiteframe-z2" md-disable-scroll-target="#prevent-scroll-target" >
 
 <!--         <md-content>
           <md-tabs>
             <md-tab  label="by permit">-->
-              <md-content class="md-padding">
+<!--               <md-content class="md-padding">
+ -->            
+              <div id="prevent-scroll-target">
                 <md-autocomplete
                   ng-disabled="false"
                   md-no-cache="false"
@@ -48,14 +50,24 @@
                   md-search-text="vm.permitText"
                   md-selected-item-change="vm.selectedItemChange(permit)"
                   md-items="permit in vm.permitSearch(vm.permitText)"
-                  md-item-text="permit.attributes.workOrderId"
+                  md-item-text="permit.display"
                   md-min-length="4"
                   md-autoselect="true"
                   placeholder="Enter your permit #">
-                  <span md-highlight-text="searchText">{{permit.attributes.workOrderId}}</span>
+                  <span md-highlight-text="searchText">{{permit.display}}</span>
                 </md-autocomplete>
-              </md-content>
-<!--            </md-tab>
+         <md-toolbar layout="row" class="md-hue-1" ng-show="vm.inspector">
+<!--             <div class="md-toolbar-tools"> -->
+              <img ng-src="https://ral.maps.arcgis.com/sharing/rest/community/users/{{vm.inspector.username}}/info/{{vm.inspector.thumbnail}}" class="md-avatar" alt="{{vm.inspector.fullName}}" />
+              <div style="float: right">
+                <small>Your Inspector Is</small>
+                <h3>{{vm.inspector.fullName}}</h3>
+              </div>
+<!--             </div> -->
+          </md-toolbar>     
+          </div>               
+<!--               </md-content>
+ --><!--            </md-tab>
             <md-tab label="inspectors">
               <md-content class="md-padding">
 
@@ -65,22 +77,14 @@
         </md-content> -->
 
         <md-content>
-          <md-toolbar layout="row" class="md-hue-1" ng-show="vm.inspector">
-<!--             <div class="md-toolbar-tools"> -->
-              <img ng-src="https://ral.maps.arcgis.com/sharing/rest/community/users/{{vm.inspector.username}}/info/{{vm.inspector.thumbnail}}" class="md-avatar" alt="{{vm.inspector.fullName}}" />
-              <div style="float: right">
-                <small>Your Inspector Is</small>
-                <h3>{{vm.inspector.fullName}}</h3>
-              </div>
-<!--             </div> -->
-          </md-toolbar>            
+         
           <md-list flex>
-            <md-list-item ng-repeat="work in vm.queue | orderBy: ['dueDate'] | filter: vm.filterAssigned(work)">
-                <md-button ng-click="vm.selectInspection(work)" ng-class="{'md-warn' : vm.checkWorkOrderId(work.work, vm.selectedPermit.attributes.workOrderId), 'md-accent': $index === 0, 'md-hue-3': $index === 0}" class="md-raised">
+            <md-list-item ng-repeat="work in vm.queue | orderBy: ['attributes.dueDate'] | filter: vm.filterAssigned(work)">
+                <md-button ng-click="vm.selectInspection(work)" ng-class="{'md-warn' : vm.checkWorkOrderId(work, vm.selectedPermit.attributes.permits), 'md-accent': $index === 0 && work.status === 2, 'md-hue-3': $index === 0 && work.attributes.status === 2}" class="md-raised" ng-attr-id="{{ vm.checkWorkOrderId(work, vm.selectedPermit.attributes.permits) ? 'selected' : ''}}">
 <!--                   <md-icon md-svg-icon="{{it.avatar}}" class="avatar"></md-icon> -->
-                  <h1>{{$index + 1}} <small ng-show="$index === 0">In Progress</small><small ng-show="vm.checkWorkOrderId(work.work, vm.selectedPermit.attributes.workOrderId)">Your Inspection</small></h1>{{work.location}}
-                  <div><small>{{work.dueDate | date: 'shortTime'}}</small></div>
-                  <div><small style="margin-right: 1em;" ng-repeat="job in work.work">{{job.code}}</small></div>                    
+                  <h1>{{$index + 1}} <small ng-show="$index === 0 && work.attributes.status === 2">In Progress</small><small ng-show="vm.checkWorkOrderId(work, vm.selectedPermit.attributes.permits)">Your Inspection</small></h1>{{work.attributes.location}}
+<!--                   <div><small>{{work.dueDate | date: 'shortTime'}}</small></div>
+ -->                  <div><small style="margin-right: 1em;">{{work.attributes.permitCodes}}</small><!-- <small style="margin-right: 1em;" ng-repeat="job in work.work">{{job.code}}</small> --></div>                    
                 </md-button>
             </md-list-item>
           </md-list>
