@@ -14,6 +14,7 @@ html, body {
   height: 38px;
   margin: 16px;
   width: 36px;
+  min-width: 0;
 }
 
 
@@ -145,4 +146,16 @@ span.name {
 
 md-autocomplete {
   margin: 1em;
+}
+.logo {
+  margin: 0 1em 0 0;
+  height: 40px;
+  width: 40px;
+}
+.menu {
+  background-color: transparent;
+  border: none;
+  height: 38px;
+  margin: 16px;
+  width: 36px;
 }
