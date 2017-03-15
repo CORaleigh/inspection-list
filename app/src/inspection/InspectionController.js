@@ -97,6 +97,7 @@
                 i = 0;
             self.view.graphics.removeAll();
             for (i = 0; i < queue.length; i += 1) {
+                queue[i].attributes.dueDateEnd = new Date(queue[i].attributes.dueDate + (2 * 3600 * 1000)).getTime()
                 if (queue[i].attributes.location !== self.permit.attributes.location) {
                     color = [50, 50, 50];
                     if (queue[i].attributes.status === 2) {
@@ -121,12 +122,12 @@
 
             }, 1000);
         };
-        $interval(function () {
-            if (self.selectedPermit) {
-                intervalSet = true;
-                inspectionService.getWorkerQueue(self.selectedPermit.attributes.workerId).then(self.workerQueueReceived);
-            }
-        }, 5000);
+        // $interval(function () {
+        //     if (self.selectedPermit) {
+        //         intervalSet = true;
+        //         inspectionService.getWorkerQueue(self.selectedPermit.attributes.workerId).then(self.workerQueueReceived);
+        //     }
+        // }, 5000);
         // *********************************
         // Internal methods
         // *********************************

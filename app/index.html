@@ -86,8 +86,8 @@
                 <md-button ng-click="vm.selectInspection(work)" ng-class="{'md-warn' : vm.checkWorkOrderId(work, vm.selectedPermit.attributes.permits), 'md-accent': work.attributes.status === 2, 'md-hue-3': work.attributes.status === 2}" class="md-raised" ng-attr-id="{{ vm.checkWorkOrderId(work, vm.selectedPermit.attributes.permits) ? 'selected' : ''}}">
 <!--                   <md-icon md-svg-icon="{{it.avatar}}" class="avatar"></md-icon> -->
                   <h1>{{$index + 1}} <small ng-show="work.attributes.status === 2">In Progress</small><small ng-show="vm.checkWorkOrderId(work, vm.selectedPermit.attributes.permits)">Your Inspection</small></h1>{{work.attributes.location}}
-<!--                   <div><small>{{work.dueDate | date: 'shortTime'}}</small></div>
- -->                  <div><small style="margin-right: 1em;">{{work.attributes.permitCodes}}</small><!-- <small style="margin-right: 1em;" ng-repeat="job in work.work">{{job.code}}</small> --></div>                    
+                      <div><small>{{work.attributes.dueDate | date: 'shortTime'}} to {{work.attributes.dueDateEnd | date: 'shortTime'}} </small></div>
+                      <div><small style="margin-right: 1em;">{{work.attributes.permitCodes}}</small><!-- <small style="margin-right: 1em;" ng-repeat="job in work.work">{{job.code}}</small> --></div>                    
                 </md-button>
             </md-list-item>
           </md-list>
